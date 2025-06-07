@@ -1,0 +1,93 @@
+<template>
+    <lightning-card title="Football Competitions">
+        <div class="slds-p-around_medium">
+
+            <!-- Status + Fetch Button -->
+            <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                <div class="slds-text-body_regular">
+                    <span class={dataStatusClass}>
+                        ●
+                    </span>
+                    <span class="slds-m-left_x-small">
+                        Data Status:
+                        <strong> &nbsp; {dataStatusText}</strong>
+                    </span>
+                </div>
+                <lightning-button variant="neutral" label="Fetch Competitions" onclick={fetchCompetitionData}
+                    icon-name="utility:refresh">
+                </lightning-button>
+            </div>
+
+            <!-- Inputs -->
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2 slds-p-bottom_small">
+                    <lightning-combobox name="areaDropdown" label="Select Area" value={selectedArea}
+                        placeholder="Select Area" options={areaOptions} onchange={handleAreaChange}>
+                    </lightning-combobox>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2 slds-p-bottom_small">
+                    <lightning-combobox name="type" label="Competition Type" value={selectedType}
+                        placeholder="Select Type" options={typeOption} onchange={handleTypeChange}>
+                    </lightning-combobox>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-text-align_center slds-m-top_medium">
+                    <lightning-button variant="brand" label="Submit" onclick={handleClick} disabled={isSubmitDisabled}>
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-is-relative slds-m-top_medium">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Table or No Data -->
+            <template if:true={isSubmitted}>
+                <template if:true={filteredCompetitions.length}>
+                    <div class="slds-m-top_medium">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Name">Name</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Start Date">Start Date</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="End Date">End Date</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Image">Image</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={filteredCompetitions} for:item="comp">
+                                    <tr key={comp.id}>
+                                        <td>{comp.name}</td>
+                                        <td>{comp.currentSeason.startDate}</td>
+                                        <td>{comp.currentSeason.endDate}</td>
+                                        <td>
+                                            <img src={comp.emblem} alt="Logo"
+                                                style="height: 32px; border-radius: 4px;" />
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+                <template if:false={filteredCompetitions.length}>
+                    <div class="slds-text-align_center slds-m-top_medium slds-text-color_weak">
+                        No data present for the selected filters.
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
